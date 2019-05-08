@@ -2,11 +2,10 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = 3001;
-const userController = require('./controllers/users');
-const userMiddleware = require('./middlewares/users');
+const userRoute = require('./apis/user');
+const productRoute = require('./apis/product');
 
 app.use(bodyParser.json({ type: 'application/json' }));
-
 
 const MongoClient = require('mongodb').MongoClient;
  
@@ -23,7 +22,6 @@ MongoClient.connect(url, function(err, client) {
 		process.exit(1);
 	}
 	console.log("Connected successfully to server");
-
 	const db = client.db(dbName);
 
 	app.use(function(req, res, next) {
@@ -31,16 +29,22 @@ MongoClient.connect(url, function(err, client) {
 		return next();
 	});
 
-	app.get('/api/v1/users', userMiddleware.getListUser, userController.getListUser); // get list user
-	app.get('/api/v1/users/:id', userMiddleware.getUser, userController.getUser); // get one user by id
-	app.post('/api/v1/users', userMiddleware.createUser, userController.createUser); // create new user
-	app.delete('/api/v1/users/:id', userMiddleware.deleteUser, userController.deleteUser); // delete one user by id
-	app.put('/api/v1/users/:id', userMiddleware.updateUser, userController.updateUser); // update one user by id
-
+	// Loading apis here
+	userRoute.load(app);
+	productRoute.load(app);
+	// Lazy load
 	app.use((err, req, res, next) => {
-	    console.log(err);
+		console.log(err);
+		if (Array.isArray(err.errors)) {
+			const messages = err.errors.map(function(item) {
+				return item.messages;
+			});
+			return res.status(400).json({
+				errors: messages
+			});
+		}
 	    return res.status(400).json({
-	        message: 'Something went wrong'
+	        message: err.message
 	    });
 	});
 

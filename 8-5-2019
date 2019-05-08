@@ -1,0 +1,33 @@
+1. Express:
+Controller,
+Router,
+Middleware
+
+2. Mongodb:
+find, findOne, updateOne, findOneAndUpdate, findOneAndReplace
+
+findOne -> update, replace
+
+3. validations joi schema
+
+4. CRUD create - read - update - delete
+products;
+
+{
+	_id: Object(id),
+	name: string,
+	userId: Object(id), => get from user
+	price: number,
+	colors: StringArray ['red', 'yellow'],
+	isAvailable: boolean,
+	payload: {
+		expiredAt: Date,
+		releasedAt: Date
+	}
+}
+// cross site script
+// Optimize amount of query
+
+
+// Assignments:
+1. Using joi validation for user CRUD and product CRUD

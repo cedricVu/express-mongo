@@ -75,7 +75,7 @@ deleteUser = (req, res, next) => {
             fs.writeFileSync('users.json', JSON.stringify(listUserExist));
         } else {
             return next(new Error('Not found user!'));
-        };
+        }
 
         return res.json({
             message: 'Delete user ' + deleteUserId + ' successfully!'
@@ -106,7 +106,7 @@ updateUser = (req, res, next) => {
             fs.writeFileSync('users.json', JSON.stringify(listUserExist));
         } else {
             return next(new Error('Not found user!'));
-        };
+        }
 
         return res.json({
             message: 'Update user ' + updateUserId + ' successfully!'
