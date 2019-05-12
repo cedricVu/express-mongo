@@ -1,13 +1,12 @@
 const fs = require('fs');
 const { ObjectId } = require('mongodb');
+const User = require('../models/user.js');
 
 // get info one user
 getUser = async (req, res, next) => {
     try {
         const userId = req.params.id;
-        const user = await req.db.collection('users').findOne({
-            _id: ObjectId(userId)
-        });
+        const user = await User.findOne({ _id: userId });
 
         if (!user) {
             return next(new Error('USER_NOT_FOUND'));
