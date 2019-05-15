@@ -31,6 +31,8 @@ exports.getAll = async (req, res, next) => {
         return res.json({
             products
         });
+        // get products, each product -> user 
+        // populate
     } catch (e) {
         return next(e);
     }

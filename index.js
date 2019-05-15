@@ -18,7 +18,6 @@ models
 	process.exit(1)
 });
 app.use(bodyParser.json({ type: 'application/json' }));
- 
 
 // Loading apis here
 userRoute.load(app);

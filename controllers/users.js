@@ -1,13 +1,25 @@
 const fs = require('fs');
+const bcrypt = require('bcrypt-nodejs');
 const { ObjectId } = require('mongodb');
 const User = require('../models/user.js');
+const jwt = require('jsonwebtoken');
 
 // get info one user
-getUser = async (req, res, next) => {
+updateById = async (req, res, next) => {
     try {
         const userId = req.params.id;
         const user = await User.findOne({ _id: userId });
+        if (!user) {
+            return next(new Error());
+        }
+        // user.username = username;
+        // user.password = password;
+        // await user.save();
 
+            // Instance (Model) (method, properies, _doc ...)
+        // doc
+        // user.save()
+        // user.create()
         if (!user) {
             return next(new Error('USER_NOT_FOUND'));
         }
@@ -24,7 +36,13 @@ getUser = async (req, res, next) => {
 // get info list user
 getListUser = async (req, res, next) => {
     try {
-        const users = await req.db.collection('users').find().toArray();
+        const token = req.query.token;
+        if (!token) {
+            return next(new Error('NOT_FOUND_TOKEN'));
+        }
+        jwt.verify(token, 'shhhhh');
+
+        const users = await User.find().lean();
         return res.json({
             message: 'List users',
             data: users
@@ -40,19 +58,51 @@ createUser = async (req, res, next) => {
         const username = req.body.username;
         const password = req.body.password;
 
-        const newUser = {
-            username: username,
-            password: password
-        };
+        const salt = bcrypt.genSaltSync(2);
+        const hashPassword = bcrypt.hashSync(password, salt);
 
-        const result = await req.db.collection('users').insertOne(newUser);
+        const result = await User.create({
+            username,
+            password: hashPassword
+        });
+
+        delete result._doc.password;
+
         return res.json({
             message: 'Create new user successfully',
-            data: result.ops[0]
+            data: result
         });
 
     } catch (e) {
-        return next(new Error('Something went wrong'));
+        return next(e);
+    }
+};
+
+login = async (req, res, next) => {
+    try {
+        const username = req.body.username;
+        const password = req.body.password;
+
+        const user = await User.findOne({
+            username
+        });
+
+        if (!user) {
+            return next(new Error('account not existed'));
+        }
+        const isValidPassword = bcrypt.compareSync(password, user.password);
+        if (!isValidPassword) {
+            return next(new Error('Password is incorrect'));
+        }
+        // Generate the access token to user.
+        const token = jwt.sign({ username }, 'shhhhh', { expiresIn: 60 }); // data, key to verify the token
+        return res.json({
+            message: 'Login successfully',
+            data: user,
+            access_token: token
+        });
+    } catch (e) {
+        return next(e);
     }
 };
 
@@ -116,9 +166,10 @@ updateUser = (req, res, next) => {
 };
 
 module.exports = {
-    getUser: getUser,
+    // getUser: getUser,
     getListUser: getListUser,
     createUser: createUser,
-    deleteUser: deleteUser,
-    updateUser: updateUser
+    login: login
+    // deleteUser: deleteUser,
+    // updateUser: updateUser
 };
