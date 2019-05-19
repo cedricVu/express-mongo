@@ -1,0 +1,77 @@
+Authentication:
+
+1. Login (username, password) => return token(key)
+- Get username, password from body
+- Find user by username
+- If not exist user => return error
+- Check password by compareSync bcrypt
+- If check false return error
+- return login successfull
+
+
+2. getOneUser, getAllProduct: required the token
+
+username: son
+password: abc123 -> jkflasjdlkfjejioajkldu3948938nnalkjdfkdjskfj3iu8udfjk
+
+
+3. JWT -> sign -> token
+- After login successfully, gen token along with data, secretKey.
+- Return the token.
+
+4. verify token
+- All user api need tobe user authentication
+ + Get token from client in body, param, query, header
+ + Verify the token
+ + If not valid => catch error from jwt.
+ + return data.
+
+- Homework
+1. Authentication to all apis.
+2. Mongooose: lean(), select()
+3. Refactor middleware authentication
+4. Research key pair for jwt. // microservices
+5. User authentication
+6. Bearer jwt
+
+------
+4. Key pair = [privateKey, publicKey]
+ use secretKey ('this_my_secret_key') -> token
+ verify the token by 'this_my_secret_key'
+
+ -----
+
+ use privateKey to gen the token.
+ use privateKey or publicKey verify the token.
+
+ // Cung cap privateKey -> publicKey
+
+
+ ---------------------
+ 1. Get publicKey, private from http://travistidwell.com/blog/2013/09/06/an-online-rsa-public-and-private-key-generator/
+ 2. Create new file be called: private.key and the file public.key.
+ Store in config folder.
+ 3. Use privateKey to sign the token.
+ 4. Use publicKey to verify the token in authentication middleware.
+
+
+ 6. Token from body, headers, params must be include the `Bearer ` prefix format.
+ Token from query not required the `Bearer` format.
+
+
+ ----------------
+ Assignment.
+ 1. Refactor.
+ 2. Forgot password. (node mailer)
+ https://www.npmjs.com/package/nodemailer
+ - Api: POST: /api/v1/users/forget-password
+ - Client send the email to server.
+ - Check email is existed in db.
+ - if existed user -> 
+ 	+ gen random code -> save to user collection by the email db // jwt
+ 	+ Send code to email
+
+ - API: POST: /api/v1/users/reset-password
+ 	+ client send to server: email, code, newPassword
+ 	+ check in db if this email is requesting to reset password
+ 	+ Reset password (hash)

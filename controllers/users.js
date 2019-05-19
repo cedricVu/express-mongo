@@ -3,11 +3,13 @@ const bcrypt = require('bcrypt-nodejs');
 const { ObjectId } = require('mongodb');
 const User = require('../models/user.js');
 const jwt = require('jsonwebtoken');
+const { sign } = require('../helpers/jwt-helper.js');
 
 // get info one user
 updateById = async (req, res, next) => {
     try {
-        const userId = req.params.id;
+        // I can get _id from login. const _id = req.user._id
+        // const userId = req.params.id;
         const user = await User.findOne({ _id: userId });
         if (!user) {
             return next(new Error());
@@ -36,12 +38,6 @@ updateById = async (req, res, next) => {
 // get info list user
 getListUser = async (req, res, next) => {
     try {
-        const token = req.query.token;
-        if (!token) {
-            return next(new Error('NOT_FOUND_TOKEN'));
-        }
-        jwt.verify(token, 'shhhhh');
-
         const users = await User.find().lean();
         return res.json({
             message: 'List users',
@@ -95,7 +91,7 @@ login = async (req, res, next) => {
             return next(new Error('Password is incorrect'));
         }
         // Generate the access token to user.
-        const token = jwt.sign({ username }, 'shhhhh', { expiresIn: 60 }); // data, key to verify the token
+        const token = sign({ _id: user._id });
         return res.json({
             message: 'Login successfully',
             data: user,

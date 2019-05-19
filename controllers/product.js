@@ -3,6 +3,8 @@ const { ObjectId } = require('mongodb');
 exports.create = async (req, res, next) => {
     try {
         const body = req.body;
+        const logingUserId = req.user._id;
+        // author represent who created the product
         // check if user not existed
         const userId = body.userId;
         const userCollection = req.db.collection('users');
