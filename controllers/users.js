@@ -81,7 +81,7 @@ login = async (req, res, next) => {
 
         const user = await User.findOne({
             username
-        });
+        }, '_id password').lean();
 
         if (!user) {
             return next(new Error('account not existed'));
@@ -94,7 +94,6 @@ login = async (req, res, next) => {
         const token = sign({ _id: user._id });
         return res.json({
             message: 'Login successfully',
-            data: user,
             access_token: token
         });
     } catch (e) {

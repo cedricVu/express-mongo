@@ -13,7 +13,7 @@ exports.verifyToken = function(req, res, next) {
 			return next(new Error('JWT_INVALID_FORMAT'));
 		}
 		token = accessToken;
-		const verifiedData = verify(token);
+		const verifiedData = verify(token); //{ _id: 'asjdfkjskdfjjkasflkjjeijij983'}
 		req.user = verifiedData;
 		return next();
 	} catch (e) {

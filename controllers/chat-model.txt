@@ -1,0 +1,37 @@
+chatting-project
+
+1. Model:
++ users:
+_id
+username
+email
+password
+gender
+createdAt
+updatedAt
+deletedAt 2019-05-22 22:34:67
+geoPosition: [lat, lng]
+....
+
++ groups
+_id
+author: ObjecId() -> who created the group => ref User
+members: Array of ObjectId() -> All of the members in group(including the author) => ref User
+lastMessage: ObjectId()
+type: enum('individual', 'group')
+name: String
+createdAt
+updatedAt
+deletedAt
+
++ messages
+author: ref User, ObjectId() -> who sent message
+content: String
+group: ref Group -> Sent to which group.
+createdAt,
+updatedAt,
+deletedAt
+
+
+pagination message, group
+/api/v1/groups?limit=20&page=1
