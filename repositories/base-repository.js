@@ -1,6 +1,8 @@
+const { mongoose } = require('../models');
+
 module.exports = class BaseRepository {
-	constructor(model) {
-		this.model = model;
+	constructor(collectionName) {
+		this.model = mongoose.model(collectionName);
 	}
 
 	getAll(options) { 

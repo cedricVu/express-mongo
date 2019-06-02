@@ -1,7 +1,7 @@
-const GroupRepository = require('./group-repository');
-// const MessageRepository = require('./message-repository');
+const BaseRepository = require('./base-repository');
 
 module.exports = {
-	groupRepository: new GroupRepository(),
+	groupRepository: new BaseRepository('Group'),
+	userRepository: new BaseRepository('User'),
 	// messageRepository: new MessageRepository()
 }
