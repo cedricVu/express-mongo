@@ -17,6 +17,7 @@ models
 	process.exit(1)
 });
 app.use(bodyParser.json({ type: 'application/json' }));
+app.use(express.static('public'));
 
 // Loading apis here
 userRoute.load(app);
@@ -24,12 +25,6 @@ productRoute.load(app);
 groupRoute.load(app);
 // Lazy load
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
-app.get('/socket.io.js', function(req, res){
-  res.sendFile(__dirname + '/socket.io.js');
-});
 app.use((err, req, res, next) => {
 	console.log(err);
 	if (Array.isArray(err.errors)) {
@@ -45,12 +40,23 @@ app.use((err, req, res, next) => {
     });
 });
 
-io.on('connection', function(socket){
-  console.log('a user connected');
-  socket.on('disconnect', function(){
+// Socket implement
+let numberOfClient = 0;
+io.on('connection', function(socket) {
+  socket.on('receiving-message', function(data, callback) {
+  	try {
+	  	socket.broadcast.emit('send-message-from-server', data);
+  		return callback(null, data);
+  	} catch(e) {
+  		return callback(e);
+  	}
+  	
+  });
+  socket.on('disconnect', function() {
     console.log('user disconnected');
   });
 });
+
 
 
 http.listen(port, () => {

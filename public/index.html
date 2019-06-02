@@ -16,12 +16,34 @@
       <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   </head>
   <body>
-    <script type="text/javascript">
-      var socket = io('http://localhost:3001');
-    </script>
     <ul id="messages"></ul>
     <div class="form">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <input id="m" autocomplete="off" /><button id="btn-send">Send</button>
     </div>
   </body>
+
+  <script type="text/javascript">
+    const socket = io('http://localhost:3001');
+    socket.on('send-message-from-server', function(data) {
+      $('#messages').append(`
+        <li>${data.message}</li>
+      `);
+    });
+    $('#btn-send').click(function() {
+      const message = $('#m').val().trim();
+      if (message) {
+        socket.emit('receiving-message', {
+          message
+        }, function(error, returningDate) {
+          if (error) {
+            return alert('Oops, something went wrong!');
+          }
+          $('#messages').append(`
+            <li>${message}</li>
+          `);
+        });
+      }
+    });
+  </script>
+
 </html>
