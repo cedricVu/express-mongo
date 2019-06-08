@@ -1,0 +1,6 @@
+1. Cors + security
+2. Https
+3. Mongo authentication
+4. Redis
+5. Schedule + cron job
+6. Upload

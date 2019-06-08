@@ -1,6 +1,9 @@
 const { groupRepository } = require('../repositories');
+const responseHelper = require('../helpers/response-helper');
 
-exports.create = async (req, res, next) => {
+exports.create = async (req, res, next = function(error) {
+    return Promise.reject(error);
+}) => {
     try {
         const { name, members, type } = req.body;
         const logingUserId = req.user._id;
@@ -31,10 +34,7 @@ exports.create = async (req, res, next) => {
             type,
             author: logingUserId
         });
-        return res.json({
-            message: 'Create new user successfully',
-            group
-        });
+        return responseHelper.returnSuccess(res, group);
     } catch (e) {
         return next(e);
     }
@@ -44,7 +44,7 @@ exports.create = async (req, res, next) => {
 exports.list = async (req, res, next) => {
     try {
         const groups = await groupRepository.getAll({ isLean: false });
-        return res.json(groups);
+        return responseHelper.returnSuccess(res, groups);
     } catch (e) {
         return next(e);
     }

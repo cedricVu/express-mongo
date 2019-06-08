@@ -8,6 +8,7 @@ const groupRoute = require('./apis/group');
 const models = require('./models');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const socketHandler = require('./socket-handler/initialize-connection');
 
 models
 .connectDB()
@@ -40,24 +41,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Socket implement
-let numberOfClient = 0;
-io.on('connection', function(socket) {
-  socket.on('receiving-message', function(data, callback) {
-  	try {
-	  	socket.broadcast.emit('send-message-from-server', data);
-  		return callback(null, data);
-  	} catch(e) {
-  		return callback(e);
-  	}
-  	
-  });
-  socket.on('disconnect', function() {
-    console.log('user disconnected');
-  });
-});
-
-
+socketHandler.initConnection(io);
 
 http.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);
