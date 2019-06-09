@@ -1,0 +1,11 @@
+1. Create facebook app.
+2. Facebook authorization.
+3. Response from facebook: accessToken
+4. Send accessToken to server via api: create user api.
+5. Server backend received the accessToken:
+ 5.1: Use the token to call to fb -> get user information. { userID, gender, avatar, ....}
+ 5.2: Check if user existed in User collection: User.findOne({ socialId: userId});
+ 	-> If user existed: update information for user: gen token
+ 	-> If not existed: create new user -> gen token
+
+ 5.4: Client receive the token -> end

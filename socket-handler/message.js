@@ -1,5 +1,5 @@
 
-export.initEvent = function(socket) {
+exports.initEvent = function(socket) {
 	socket.on('messages', function(data, callback) {
 		try {
 			const action = data.action;

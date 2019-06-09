@@ -8,7 +8,8 @@ const groupRoute = require('./apis/group');
 const models = require('./models');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const socketHandler = require('./socket-handler/initialize-connection');
+const cors = require('cors');
+const { socketHandler } = require('./socket-handler/initialize-connection');
 
 models
 .connectDB()
@@ -20,12 +21,15 @@ models
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use(express.static('public'));
 
+app.use(cors({
+  "origin": "*"
+}));
+
 // Loading apis here
 userRoute.load(app);
 productRoute.load(app);
 groupRoute.load(app);
 // Lazy load
-
 app.use((err, req, res, next) => {
 	console.log(err);
 	if (Array.isArray(err.errors)) {
@@ -41,7 +45,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-socketHandler.initConnection(io);
+// socketHandler.initConnection(io);
 
 http.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);

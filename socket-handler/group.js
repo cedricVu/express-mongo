@@ -1,6 +1,6 @@
 const groupController = require('../controllers/group');
 
-export.initEvent = function(socket) {
+exports.initEvent = function(socket) {
 	socket.on('groups', async function(data, callback) {
 	    try {
 			const action = data.action;

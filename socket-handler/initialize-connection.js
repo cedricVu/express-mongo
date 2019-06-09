@@ -1,7 +1,7 @@
 const message = require('./message');
 const group = require('./group');
 
-export.initConnect = function (io) {
+exports.initConnect = function (io) {
 	io.use(function(socket, next) {
 		try {
 			const token = socket.handshake.query.token;

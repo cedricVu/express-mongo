@@ -78,7 +78,7 @@ login = async (req, res, next) => {
     try {
         const username = req.body.username;
         const password = req.body.password;
-
+        
         const user = await User.findOne({
             username
         }, '_id password').lean();
