@@ -43,8 +43,32 @@ exports.create = async (req, res, next = function(error) {
 
 exports.list = async (req, res, next) => {
     try {
-        const groups = await groupRepository.getAll({ isLean: false });
-        return responseHelper.returnSuccess(res, groups);
+        const { limit, lastId } = req.query;
+        
+        const [groups, totalRecord] = await Promise.all([
+            groups.find({
+                {
+                    _id: {
+                        $lt: lastId
+                    }
+                }
+            }),
+
+            groups.count({
+                {
+                    _id: {
+                        $lt: lastId
+                    }
+                }
+            })
+        ]);
+        // max size call stack = 4
+
+        // const groups = await groupRepository.getAll({ isLean: false });
+        return responseHelper.returnSuccess(res, {
+            groups,
+            totalRecord
+        });
     } catch (e) {
         return next(e);
     }

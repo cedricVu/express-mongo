@@ -5,7 +5,7 @@ module.exports = class BaseRepository {
 		this.model = mongoose.model(collectionName);
 	}
 
-	getAll(options) { 
+	getAll(options) {
 		const newOptions = Object.assign(
 			{
 				isLean: true,

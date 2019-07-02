@@ -7,9 +7,8 @@ const schema = new mongoose.Schema({
   },
   members: [
   	{
-  		type: Number,
-  		ref: 'User',
-  		unique: true
+  		type: mongoose.Schema.ObjectId,
+  		ref: 'User'
   	}
   ],
   lastMessage: {

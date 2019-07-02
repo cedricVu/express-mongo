@@ -1,0 +1,91 @@
+1. start app: pm2 start <file node to run> --name <app-name>
+2. pm2 log
+3. pm2 delete <app name> || <app id> || all // Phải chắc chắn pm2 run cho một app đang sống.
+4. pm2 list
+5. pm2 restart all || app-name || app-id
+6. pm2 start <file-node> --name -i 4
+
+app1 => cpu1
+app2 => cpu2
+app3 => cpu3
+
+using pm2
+---------
+rq1 => app1
+rq2 => app2
+req3 => app3
+
+req4 => app1
+req5 => app2
+req6 => app3
+req7 => app4
+
+req8 => app1
+
+7. zero downtime
+
+---- conflict resource
+socket.
+redis.
+------
+Tạo mới user:
+1. Kiểm tra username đang tạo đã tồn tại chưa.
+1.a. findOne(username).then(data => {return error})
+if (data) {
+	return conflict_error
+}
+1.b. insertOne();
+
+cluster mode:
+app0,
+app1
+
+user1 request create username testchoi
+user2 request create username testchoi
+
+
+
+8. Xử lý xung đột tài nguyên khi sử dụng cluster mode
+8.a. Redis lock.
+https://www.npmjs.com/package/redis-lock
+
+const client = require('redis').createClient();
+const { promisify } = require('util');
+const lock = promisify(require('redis-lock')(client));
+
+async function register(req, res, next) {
+	let unlock;
+	try {
+		unlock = await lock('register');
+	} catch (e) {
+		return Response.error('Conflict resource, please try again');
+	}
+	
+	try {
+		const username = req.body.username;
+		const existedUser = await userRepo.getOne({
+			where: {
+				username
+			},
+			select: '_id'
+		});
+
+		if (existedUser) {
+			return Response.error('User was registed before');
+		}
+
+		const newUser = await userRepo.insertOne({
+			username
+		});
+		unlock();
+		return Response.success(newUser);
+	} catch(e) {
+		return Response.error(e.message);
+	}
+	
+}
+--- How it works:
+Accept 1 request, reject the left requests
+
+- Redis will lock the request by set a value in Memmory.
+set(key, value, exp);
